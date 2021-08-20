@@ -78,10 +78,10 @@ The above JS can be represented in a tree form as:
 Things were goging smooth and the transformer was being improved with each PR until... a challenge came.
 
 ### Challenge-1: Transformation Logic Failure
-The transformation logic which was used currently could not handle nesting of elements. This means it was unable to parse the below text:
+The transformation logic which was used currently could not handle nesting of elements. This means it was unable to parse the below text:  
 *Hello __world__*.
 
-**Solution:** Rewriting the transformation logic by using the [depth first search(DFS)](https://en.wikipedia.org/wiki/Depth-first_search) for converting `CiceroMark<->JSON`.
+**Solution:** Rewriting the transformation logic by using the [depth first search(DFS)](https://en.wikipedia.org/wiki/Depth-first_search) for converting `CiceroMark<->JSON`.  
 _Reason_: From the image of the JS tree above, it is visible that each node which is responsible for rendering the text will always be present as the leaf node. So generate a OOXML for the current leaf node keeping track of the styling properties it has visited and use it finally to generate OOXML for the same.
 
 The image below shows the tree structure for the CiceroMark and OOXML.
@@ -113,23 +113,26 @@ The image below shows the tree structure for the CiceroMark and OOXML.
       }
     }
 ```
+##### Demo of the process flow
 ![dfs](https://user-images.githubusercontent.com/59891164/130235957-c3b999c0-e90f-49a0-9a6e-b3cc921aea05.gif)
-
 
 Rewriting of the [`CiceroMark->OOXML`](https://github.com/accordproject/markdown-transform/pull/418) and [`OOXML->CiceroMark`](https://github.com/accordproject/markdown-transform/pull/421).
 
+After the rewriting it was time to resume the transformation of different entities on which I worked upon and it went fine before I stumbled on another challenge:
 
-After the rewriting it was time to resume the transformation of different entities on which I worked upon.
+### Challenge-2: Optional and Conditional Nodes
+The optional and conditional nodes 
 
 Finally, I was able to write a transformer which can convert major of the CiceroMark nodes to corresponding OOXML tags.
 
 Side by side, I [integrated](https://github.com/accordproject/markdown-transform/pull/424) the current transformation with the [markus](https://github.com/accordproject/markdown-transform/tree/master/packages/markdown-cli). This esnures that one can use the transformation using the CLI. The command for transforming ciceromark_parsed to ooxml looks like:
+
+#### Create and view the transformed file
+To create a file, use: 
 ```bash
 markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
 ```
 **Note**: Save files with `xml` format.
-
-#### View the transformed file
 To use the created `xml` file, one can follow these steps:
 1. Copy the `xml` in the file.
 2. Open MS-WORD. Insert the ooxml using the [Script Lab](https://docs.microsoft.com/en-us/office/dev/add-ins/overview/explore-with-script-lab) add-in.
