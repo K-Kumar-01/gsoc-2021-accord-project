@@ -42,41 +42,56 @@ Besides this, a basic setup was done for the project.
 The corresponding details can be found in this [blog](https://github.com/accordproject/cicero-word-add-in/wiki/Blog).
 
 ## Journey
-After the community bonding period, it was time to get the hands dirty. The complete work was done on  [`algoo-ooxml`](https://github.com/accordproject/markdown-transform/tree/algoo-ooxml) branch. The initial transformation was done for `text-and-emphasis` transformer. Graudally, different transformers were being added and the process went on smoothly until we found that the transformation which was used currently not only missed entities which I was adding but could not handle with nesting of elements. This means it was unable to parse the following correctly:
+After the community bonding period, it was time to get the hands dirty. The complete work was done on  [`algoo-ooxml`](https://github.com/accordproject/markdown-transform/tree/algoo-ooxml) branch. Below is a sample CiceroMark and a tree strucure for same.
 ```js
-  {
-    "$class": "org.accordproject.commonmark.Paragraph",
-    "nodes": [
-      {
-        "$class": "org.accordproject.commonmark.Emph",
-        "nodes": [
-          {
-            "$class": "org.accordproject.commonmark.Text",
-            "text": "hello "
-          },
-          {
-            "$class": "org.accordproject.commonmark.Strong",
-            "nodes": [
-              {
-                "$class": "org.accordproject.commonmark.Text",
-                "text": "world"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+{
+  "$class": "org.accordproject.commonmark.Paragraph",
+  "nodes": [
+    {
+      "$class": "org.accordproject.commonmark.Strong",
+      "nodes": [
+        {
+          "$class": "org.accordproject.commonmark.Text",
+          "text": "strong "
+        },
+        {
+          "$class": "org.accordproject.commonmark.Code",
+          "text": "code"
+        }
+      ]
+    },
+    {
+      "$class": "org.accordproject.commonmark.Emph",
+      "nodes": [
+        {
+          "$class": "org.accordproject.commonmark.Text",
+          "text": "italics"
+        }
+      ]
+    }
+  ]
+}
 ```
+The above JS can be represented in a tree form as:
+![basic-structure](https://user-images.githubusercontent.com/59891164/130233702-fee6b84f-0aa6-4832-9261-868bf8bd6222.png)
 
-This resulted in rewriting the transformation logic by using the [depth first search(DFS)](https://en.wikipedia.org/wiki/Depth-first_search) for converting `CiceroMark<->JSON`.
+Things were goging smooth and the transformer was being improved with each PR until... a challenge came.
+
+### Challenge-1: Transformation Logic Failure
+The transformation logic which was used currently could not handle nesting of elements. This means it was unable to parse the below text:
+*Hello __world__*.
+
+**Solution:** Rewriting the transformation logic by using the [depth first search(DFS)](https://en.wikipedia.org/wiki/Depth-first_search) for converting `CiceroMark<->JSON`.
+_Reason_: From the image of the JS tree above, it is visible that each node which is responsible for rendering the text will always be present as the leaf node. So generate a OOXML for the current leaf node keeping track of the styling properties it has visited and use it finally to generate OOXML for the same.
+
+The image below shows the tree structure for the CiceroMark and OOXML.
+![trees](https://user-images.githubusercontent.com/59891164/130236278-5d3b29b5-affd-49d1-bcc0-a07f5729b5d8.png)
+
 
 #### Explanation of the DFS for CiceroMark<->JSON
 1. If the node belongs to `block` nodes(paragraph, clause, heading), use DFS for the current node.
 2. If the node belongs to `properties` nodes(emphasis, link, strong, etc.) append them to properties
 3. If the node belongs to `terminating` nodes(text, inline-code, softbreak, thematic break, etc.) then use the properties to generate the OOXML.
-
-
 ```js
      /**
      * Traverses CiceroMark nodes in a DFS approach
@@ -98,15 +113,8 @@ This resulted in rewriting the transformation logic by using the [depth first se
       }
     }
 ```
+![dfs](https://user-images.githubusercontent.com/59891164/130235957-c3b999c0-e90f-49a0-9a6e-b3cc921aea05.gif)
 
-#### Explanation with an example
-Example: Let nodes be `Paragraph->Strong->Emph->Text`.
-1. Node= Paragraph. Dive deep
-2. Node = Strong. properties= [...properties, Strong]
-3. Node = Emph. properties= [...properties, Emph]
-4. Node = Text. Iterate over properties in the order (1st to last). Found strong, append strong property. Found emph, append emph property. Properties end. Place the text value in <w:t> . Place the property elements and <w:t>  in <w:r> . The full ooxml for the given text node is generated.
-
-The approach for the `OOXM->CiceroMark` is also DFS based and similar to the above.
 
 Rewriting of the [`CiceroMark->OOXML`](https://github.com/accordproject/markdown-transform/pull/418) and [`OOXML->CiceroMark`](https://github.com/accordproject/markdown-transform/pull/421).
 
@@ -119,7 +127,17 @@ Side by side, I [integrated](https://github.com/accordproject/markdown-transform
 ```bash
 markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
 ```
-**Note**: Save files with `xml` format to ensure that they can be properly rendered when you open them in MS-WORD
+**Note**: Save files with `xml` format.
+
+#### View the transformed file
+To use the created `xml` file, one can follow these steps:
+1. Copy the `xml` in the file.
+2. Open MS-WORD. Insert the ooxml using the [Script Lab](https://docs.microsoft.com/en-us/office/dev/add-ins/overview/explore-with-script-lab) add-in.
+   Be sure to install the add-in.
+   
+Alternatively, one can also right click on the document and open with MS-WORD to see the transformed content.
+
+In future, integration with the [add-in](https://github.com/accordproject/cicero-word-add-in) will ensure interaction with the transformed file with advanced features. Currently, the features are limited via above two methods.
 
 ## Result
 ```
