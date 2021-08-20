@@ -163,7 +163,6 @@ Currently, the `CiceroMark<->OOXML` is able to do the following conversions:
 - Conditional
 - Formula
 
-
-Apart from these, a total of 29 [PR](https://github.com/accordproject/markdown-transform/pulls?q=is%3Apr+author%3AK-Kumar-01+is%3Aclosed) were made including various commit messages and 4 issues which were made.
+The project was started as an improvement to the already existing transformer and a total of 29 [PR](https://github.com/accordproject/markdown-transform/pulls?q=is%3Apr+author%3AK-Kumar-01+is%3Aclosed) were made including various commit messages and 4 issues which were made.
 
 
