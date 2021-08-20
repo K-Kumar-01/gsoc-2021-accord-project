@@ -116,7 +116,7 @@ After the rewriting it was time to resume the transformation of different entiti
 Finally, I was able to write a transformer which can convert major of the CiceroMark nodes to corresponding OOXML tags.
 
 Side by side, I [integrated](https://github.com/accordproject/markdown-transform/pull/424) the current transformation with the [markus]https://github.com/accordproject/markdown-transform/tree/master/packages/markdown-cli). This esnures that one can use the transformation using the CLI. The command for transforming ciceromark_parsed to ooxml looks like:
-```js
-markus transform --from ciceromark_parsed --to ooxml --input <CiceroMarkfile Path> --output <path>.xml
+```bash
+markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
 ```
 **Note**: Save files with `xml` format to ensure that they can be properly rendered when you open them in MS-WORD
