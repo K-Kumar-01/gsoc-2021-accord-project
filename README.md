@@ -115,8 +115,55 @@ After the rewriting it was time to resume the transformation of different entiti
 
 Finally, I was able to write a transformer which can convert major of the CiceroMark nodes to corresponding OOXML tags.
 
-Side by side, I [integrated](https://github.com/accordproject/markdown-transform/pull/424) the current transformation with the [markus]https://github.com/accordproject/markdown-transform/tree/master/packages/markdown-cli). This esnures that one can use the transformation using the CLI. The command for transforming ciceromark_parsed to ooxml looks like:
+Side by side, I [integrated](https://github.com/accordproject/markdown-transform/pull/424) the current transformation with the [markus](https://github.com/accordproject/markdown-transform/tree/master/packages/markdown-cli). This esnures that one can use the transformation using the CLI. The command for transforming ciceromark_parsed to ooxml looks like:
 ```bash
 markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
 ```
 **Note**: Save files with `xml` format to ensure that they can be properly rendered when you open them in MS-WORD
+
+## Result
+```
+# For testing purpose only
+
+### Checking Heading Level 3 *with* some **styling**
+
+Now let us create a paragraph for the same which _will use with **nesting and making `inline codes`**_ to ensure` it works finely.
+
+Also here is a [link](https://www.google.com)
+
+[*Links*](https://www:google.com) can also be styled.
+
+<codeblock tags>
+Finally a codeblock to ensure everything's working fine and nicely.
+<codeblock tags>
+```
+Paste the above [here](https://templatemark-dingus.netlify.app/) and switch to `ast` tab to see the corresponding CiceroMark.
+
+#### Markdown Representation
+![Screenshot (120)](https://user-images.githubusercontent.com/59891164/130188842-f3eb582e-dd11-45bf-83ba-ca7c29a0218e.png)
+
+#### OOXML Representation
+![Screenshot (119)](https://user-images.githubusercontent.com/59891164/130188961-9c30b512-266b-4ea5-bfc4-712fbfe3b7b6.png)
+
+
+## Current Standing
+Currently, the `CiceroMark<->OOXML` is able to do the following conversions:
+- Text
+- Emphasis
+- Heading
+- Variable
+- Softbreak
+- Strong
+- Code
+- Thematic Break
+- Codeblock
+- Clause
+- Link
+- Optional
+- Conditional
+- Formula
+
+
+Apart from these, a total of 29 [PR](https://github.com/accordproject/markdown-transform/pulls?q=is%3Apr+author%3AK-Kumar-01+is%3Aclosed) were made including various commit messages and 4 issues which were made.
+
+
