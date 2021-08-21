@@ -109,14 +109,14 @@ Finally, I wrote a transformer that can convert the major of the CiceroMark node
 
 Side by side, I [integrated](https://github.com/accordproject/markdown-transform/pull/424) the current transformation with the [markus](https://github.com/accordproject/markdown-transform/tree/master/packages/markdown-cli). This esnures that one can use the transformation using the CLI. The command for transforming ciceromark_parsed to ooxml looks like:
 
-#### Create and view the transformed file
+## Create and view the transformed file
 To create a file, use: 
 ```bash
 markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
 ```
-**Note**: Save files with `XML format.
-To use the created `XML file, one can follow these steps:
-1. Copy the `XML in the file.
+**Note**: Save files with `XML` format. See [here](https://raw.githubusercontent.com/accordproject/markdown-transform/algoo-ooxml/packages/markdown-transform/transformations.png) for the conversions possible.  
+To use the created `XML` file, one can follow these steps:
+1. Copy the `XML` in the file.
 2. Open MS-WORD. Insert the OOXML using the [Script Lab](https://docs.microsoft.com/en-us/office/dev/add-ins/overview/explore-with-script-lab) add-in.
    Be sure to install the add-in.
    
@@ -148,6 +148,8 @@ Paste the above [here](https://templatemark-dingus.netlify.app/) and switch to t
 #### OOXML Representation
 ![Screenshot (119)](https://user-images.githubusercontent.com/59891164/130188961-9c30b512-266b-4ea5-bfc4-712fbfe3b7b6.png)
 
+#### Sample CiceroMark and OOXML 
+![Screenshot (126)](https://user-images.githubusercontent.com/59891164/130321418-461f8422-b6a5-4b58-a5b6-f47e7eeac341.png)
 
 ## Current Standing
 Currently, the `CiceroMark<->OOXML` can do the following conversions:
