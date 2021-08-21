@@ -9,10 +9,10 @@ Accord Project is an organization that is developing an ecosystem and tools spec
 ## About the Project
 Accord Project create [templates](https://templates.accordproject.org/) for contracts and clauses using the [cicero](https://docs.accordproject.org/docs/started-installation.html), [ergo](https://docs.accordproject.org/docs/logic-ergo.html), and [concerto](https://docs.accordproject.org/docs/model-concerto.html). These templates, which are essentially `.cta` files can then be converted into different formats like `md`, `pdf`, `json` using the [transformer](https://github.com/accordproject/markdown-transform) library.
 
-My task was to improve the transformer by allowing the `CiceroMark`<->` OOXML` interconversion by including the logic for missing entities in the transformer and improve the existing transformations ensuring proper roundtrip between the two.
+My task was to improve the transformer by allowing the `CiceroMark`<-> `OOXML` interconversion by including the logic for missing entities in the transformer and improve the existing transformations ensuring proper roundtrip between the two.
 
 ## Use Case
-By integrating the above transformation process, one can convert the templates into an `XML file which can be opened with MS Word, making it easier for non-technical people to work with the contracts and clauses. An [add-in](https://github.com/accordproject/cicero-word-add-in) is already created(not fully capable) which can make the interaction easier with these Word documents even before.
+By integrating the above transformation process, one can convert the templates into an `XML` file which can be opened with MS Word, making it easier for non-technical people to work with the contracts and clauses. An [add-in](https://github.com/accordproject/cicero-word-add-in) is already created(not fully capable) which can make the interaction easier with these Word documents even before.
 
 ## OOXML
 Office Open Extensible Markup Language abbreviated as [`OOXML`](https://en.wikipedia.org/wiki/Office_Open_XML) is a zip-based XML file format which was developed by Microsoft. It can be used to represent documents, presentations, spreadsheets, etc.
@@ -82,7 +82,7 @@ The transformation logic which was used currently could not handle the nesting o
 *Hello __world__*.
 
 **Solution:** Rewriting the transformation logic by using the [depth first search(DFS)](https://en.wikipedia.org/wiki/Depth-first_search) for converting `CiceroMark<->JSON`.  
-_Reason_: From the image of the JS tree above, it is visible that each node that is responsible for rendering the text will always be present as the leaf node. To generate an OOXML for the current leaf node keeping track of the styling properties it has visited and use it finally to generate OOXML for the same.
+_Reason_: From the image of the JS tree above, it is visible that each node that is responsible for rendering the text will always be present as the leaf node. To generate an OOXML for the current leaf node, keep track of the styling properties it has visited and use it to generate OOXML for the same.
 
 The image below shows the tree structure for the CiceroMark and OOXML.
 ![trees](https://user-images.githubusercontent.com/59891164/130236278-5d3b29b5-affd-49d1-bcc0-a07f5729b5d8.png)
@@ -92,27 +92,6 @@ The image below shows the tree structure for the CiceroMark and OOXML.
 1. If the node belongs to `block` nodes(paragraph, clause, heading), use DFS for the current node.
 2. If the node belongs to `properties` nodes(emphasis, link, strong, etc.) append them to properties
 3. If the node belongs to `terminating` nodes(text, inline-code, softbreak, thematic break, etc.) then use the properties to generate the OOXML.
-```js
-     /**
-     * Traverses CiceroMark nodes in a DFS approach
-     *
-     * @param {object} node             CiceroMark Node
-     * @param {array}  properties       Properties to be applied on the current node
-     * @param {string} parent           Parent element of the node(paragraph, clause, heading, and optional)
-     * @param {object} parentProperties Properties of parent on which children depend for certain styles(vanish property for hidden nodes)
-     * @returns {string} OOXML for the inline nodes of the current parent
-     */
-    traverseNodes(node, properties = [], parent, parentProperties = {}){
-      if(typeOf(node)===block){
-        traverseNodes(node, properties = [], node.$class, parentProperties = {})
-      }else if(typeOf(node)===terminating){
-        updatedProperties=[...properties,node.$class)
-        traverseNodes(node, properties = [], node.$class, parentProperties = {})
-      }else{
-        generateOOXML
-      }
-    }
-```
 ##### Demo of the process flow
 ![dfs](https://user-images.githubusercontent.com/59891164/130235957-c3b999c0-e90f-49a0-9a6e-b3cc921aea05.gif)
 
@@ -121,7 +100,10 @@ Rewriting of the [`CiceroMark->OOXML`](https://github.com/accordproject/markdown
 After the rewriting it was time to resume the transformation of different entities on which I worked upon and it went fine before I stumbled on another challenge:
 
 ### Challenge-2: Optional and Conditional Nodes
-The optional and conditional nodes 
+The optional and conditional nodes, unlike others, can have different nodes depending on conditions.
+![cond-opt](https://user-images.githubusercontent.com/59891164/130319714-5ce64b68-b54a-405c-b8c3-3f08d1f784bf.png)
+The main problem that arose here was to hide the `nodes` of false conditions.
+**Solution:** The problem was resolved by using the `w:vanish` property of `OOXML`. It specifies that the content is to be hidden from display at display time. In other words, it is similar to ` display:none ` of CSS. More information [here](http://officeopenxml.com/WPtextFormatting.php)
 
 Finally, I wrote a transformer that can convert the major of the CiceroMark nodes to corresponding OOXML tags.
 
@@ -187,3 +169,17 @@ Currently, the `CiceroMark<->OOXML` can do the following conversions:
 The project was started as an improvement to the already existing transformer and a total of 29 [PR](https://github.com/accordproject/markdown-transform/pulls?q=is%3Apr+author%3AK-Kumar-01+is%3Aclosed) were made including various commit messages and 4 issues which were made.
 
 
+## Future Goals
+The future seems bright for the transformer. There are still few nodes left that require transformation. Some of them are:
+- List
+- Blockquote
+- Image
+
+In addition, the transformer needs to be integrated properly with the [add-in](https://github.com/accordproject/cicero-word-add-in) so that the working can be made more smooth and easier for users.
+
+
+## Experience
+GSoC was a fun journey for me. I got to learn many things this summer by working on the project. From a person, who didn't know much about MS Word (didn't use it much) to understanding the syntax on which word documents are built upon was enthralling.
+I would like to thank my mentors [Aman](https://github.com/algomaster99) and [Dan](https://github.com/dselman) for helping me out whenever I got stuck with or was not clear of the approach for solving a particular problem. I would also like to thank the Accord Project Community for providing me the opportunity to work with them and helping me understand the ecosystem and its workings.
+
+I am hoping to contribute to Accord Project in the future by improving the services they offer either by coding or by providing ideas for the same. I will also help others who are looking to contribute to Accord Project by explaining things and the ecosystem passing the torch to the successors. Ultimately, **GSoC is just the beginning**.
