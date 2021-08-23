@@ -7,12 +7,14 @@ Report of the work done in GSoC 2021
 Accord Project is an organization that is developing an ecosystem and tools specifically for smart legal contracts.
 
 ## About the Project
-Accord Project create [templates](https://templates.accordproject.org/) for contracts and clauses using the [cicero](https://docs.accordproject.org/docs/started-installation.html), [ergo](https://docs.accordproject.org/docs/logic-ergo.html), and [concerto](https://docs.accordproject.org/docs/model-concerto.html). These templates, which are essentially `.cta` files can then be converted into different formats like `md`, `pdf`, `json` using the [transformer](https://github.com/accordproject/markdown-transform) library.
+Accord Project create [templates](https://templates.accordproject.org/) for contracts and clauses using the [cicero](https://docs.accordproject.org/docs/started-installation.html), [ergo](https://docs.accordproject.org/docs/logic-ergo.html), and [concerto](https://docs.accordproject.org/docs/model-concerto.html). These templates, which arethat are stored in `.cta` files can then be converted into different formats like `md`, `pdf`, `json` using the [transformer](https://github.com/accordproject/markdown-transform) library.
 
 My task was to improve the transformer by allowing the `CiceroMark`<-> `OOXML` interconversion by including the logic for missing entities in the transformer and improve the existing transformations ensuring proper roundtrip between the two.
 
 ## Use Case
 By integrating the above transformation process, one can convert the templates into an `XML` file which can be opened with MS Word, making it easier for non-technical people to work with the contracts and clauses. An [add-in](https://github.com/accordproject/cicero-word-add-in) is already created(not fully capable) which can make the interaction easier with these Word documents even before.
+
+The blog post for the add-in can be read [here](https://accordproject.org/news/gsoc-2020-cicero-word-add-in/).
 
 ## OOXML
 Office Open Extensible Markup Language abbreviated as [`OOXML`](https://en.wikipedia.org/wiki/Office_Open_XML) is a zip-based XML file format which was developed by Microsoft. It can be used to represent documents, presentations, spreadsheets, etc.
@@ -73,7 +75,8 @@ After the community bonding period, it was time to get the hands dirty. The comp
 }
 ```
 The above JS can be represented in a tree form as:
-![basic-structure](https://user-images.githubusercontent.com/59891164/130233702-fee6b84f-0aa6-4832-9261-868bf8bd6222.png)
+![basic-structure](https://user-images.githubusercontent.com/59891164/130433050-34259c41-68ed-4e22-b1c4-344bdb8506f6.png)
+
 
 Things were going smooth and the transformer was being improved with each PR until... a challenge came.
 
@@ -112,7 +115,7 @@ Side by side, I [integrated](https://github.com/accordproject/markdown-transform
 ## Create and view the transformed file
 To create a file, use: 
 ```bash
-markus transform --from ciceromark_parsed --to ooxml --input <path> --output <path>.xml
+markus transform --from ciceromark_parsed --to ooxml --input pathName --output pathName.xml
 ```
 **Note**: Save files with `XML` format. See [here](https://raw.githubusercontent.com/accordproject/markdown-transform/algoo-ooxml/packages/markdown-transform/transformations.png) for the conversions possible.  
 To use the created `XML` file, one can follow these steps:
